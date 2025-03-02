@@ -58,12 +58,12 @@ export const FoldSpaceHelperReactView = (
 	// @ts-ignore
 	const [channels, setChannels] = useState<object[]>([]);
 	const [generatePromptList, setGeneratePromptList] = useState<object[]>([]);
-	const [messageModalIsVisible, setMessageModalIsVisible] =
-		useState(false);
+	const [messageModalIsVisible, setMessageModalIsVisible] = useState(false);
 	// @ts-ignore
 	const [modal2IsVisible, setModal2IsVisible] = useState(false);
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 	const [runFlowMessages, setRunFlowMessages] = useState<string[]>([]);
+	const [resultDocUrl, setResultDocUrl] = useState<string>("");
 	const addRunFlowMessageRecord = (message: string) => {
 		setRunFlowMessages((prev) => [...prev, message]);
 	};
@@ -85,9 +85,7 @@ export const FoldSpaceHelperReactView = (
 				setGeneratePromptList(res);
 			})
 			.catch((err) => {
-				addRunFlowMessageRecord(
-					`获取提示词失败 ${err}\n${err.stack}`
-				);
+				addRunFlowMessageRecord(`获取提示词失败 ${err}\n${err.stack}`);
 			});
 	}, []);
 	const {
@@ -557,6 +555,10 @@ export const FoldSpaceHelperReactView = (
 							type="button"
 							disabled={submitButtonDisabled}
 							onClick={async () => {
+								setRunFlowMessages((prev) => [
+									"开始验证表单...",
+								]);
+								setResultDocUrl("");
 								const isValid = await trigger();
 								new Notice(`开始验证表单, 验证结果:${isValid}`);
 								if (isValid) {
@@ -564,10 +566,7 @@ export const FoldSpaceHelperReactView = (
 									const data = getValues();
 									if (data.if_create_vector_db === "1") {
 										try {
-											setRunFlowMessages([]);
-											setMessageModalIsVisible(
-												true
-											);
+											setMessageModalIsVisible(true);
 											addRunFlowMessageRecord(
 												"开始上传附件..."
 											);
@@ -597,10 +596,42 @@ export const FoldSpaceHelperReactView = (
 										addRunFlowMessageRecord(
 											"开始运行流程..."
 										);
-										await runDifyFlow(data, addRunFlowMessageRecord);
-										addRunFlowMessageRecord(
-											"运行流程完成..."
-										);
+										const beginTime = new Date().getTime();
+										const interval = setInterval(() => {
+											addRunFlowMessageRecord(
+												`任务运行中... 已经开始 ${
+													(new Date().getTime() -
+													beginTime)/1000
+												} 秒`
+											);
+										}, 10 * 1000);
+										try {
+											const difyOut = await runDifyFlow(
+												data,
+												addRunFlowMessageRecord
+											);
+											const final_text =
+												difyOut?.data?.outputs?.text;
+											const final_obj = JSON.parse(
+												final_text || "{}"
+											);
+											setResultDocUrl(
+												final_obj?.doc_url || ""
+											);
+											addRunFlowMessageRecord(
+												"运行流程完成..."
+											);
+										} catch (error) {
+											console.error(
+												"运行流程失败",
+												error
+											);
+											addRunFlowMessageRecord(
+												`运行流程失败 ${error}`
+											);
+										} finally {
+											clearInterval(interval);
+										}
 									} catch (error) {
 										console.error("运行流程失败", error);
 										if (error instanceof Error) {
@@ -658,12 +689,50 @@ export const FoldSpaceHelperReactView = (
 					</div>
 					<div>
 						<p>
-							<a href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
+							<a
+								href="https://diyf.apps.foldspace.cn/app/708cb23f-5a12-4209-a19b-560e06511742/logs"
 								target="_blank"
-								style={{ textDecoration: "none", color: "blue" }}
+								style={{
+									textDecoration: "none",
+									color: "blue",
+								}}
+							>
+								查看dify任务日志
+							</a>
+							<span style={{ marginLeft: 12, marginRight: 12 }}>
+								{" "}
+								|{" "}
+							</span>
+							<a
+								href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
+								target="_blank"
+								style={{
+									textDecoration: "none",
+									color: "blue",
+								}}
 							>
 								查看生成结果
 							</a>
+							{resultDocUrl && (
+								<span
+									style={{ marginLeft: 12, marginRight: 12 }}
+								>
+									{" "}
+									|{" "}
+								</span>
+							)}
+							{resultDocUrl && (
+								<a
+									href={resultDocUrl}
+									target="_blank"
+									style={{
+										textDecoration: "none",
+										color: "blue",
+									}}
+								>
+									{resultDocUrl}
+								</a>
+							)}
 						</p>
 					</div>
 					<div>

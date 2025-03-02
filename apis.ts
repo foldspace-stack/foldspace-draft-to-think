@@ -62,7 +62,8 @@ export const runDifyFlow = async (values: any, setMassage: (message: string) => 
 	valuesTmp.doc_content = undefined
 	new Notice(`开始运行流程 参数\n${JSON.stringify(valuesTmp)}`);
 	setMassage(`开始运行流程 /bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow`);
-	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow", values);
-	setMassage(`运行流程完成 结果\n${JSON.stringify(response.data,null,4)}`);
-	return response.data;
+	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow", values,);
+	const difyOut = response.data;
+	setMassage(`运行流程完成 结果\n${JSON.stringify(difyOut,null,4)}`);
+	return difyOut;
 };
