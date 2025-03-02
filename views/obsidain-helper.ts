@@ -113,6 +113,23 @@ export function removeLeadingSlash(str: string): string {
 	}
 	return str;
 }
+export function isWindows(): boolean {
+	return process.platform === "win32";
+}
+export function linuxPathToWinPath(
+	linuxPath: string,
+	driveLetter = "C:"
+): string {
+	// 替换所有的正斜杠为反斜杠
+	let winPath = linuxPath.replace(/\//g, "\\");
+
+	// 如果需要，添加盘符
+	if (winPath.startsWith("\\")) {
+		winPath = `${driveLetter}${winPath}`;
+	}
+
+	return winPath;
+ }
 
 export async function uploadAttachmentFiles(
 	attachments: { path: string; fileName: string; file: File | null }[],
@@ -127,6 +144,9 @@ export async function uploadAttachmentFiles(
 			const resourcePath = attachment.path;
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
+			);
+			setMassage(
+				`是否为window平台:${isWindows()}`
 			);
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
 				decodeURIComponent(resourcePath),

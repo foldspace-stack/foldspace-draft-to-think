@@ -657,6 +657,16 @@ export const FoldSpaceHelperReactView = (
 						<pre>{runFlowMessages.join("\n")}</pre>
 					</div>
 					<div>
+						<p>
+							<a href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
+								target="_blank"
+								style={{ textDecoration: "none", color: "blue" }}
+							>
+								查看生成结果
+							</a>
+						</p>
+					</div>
+					<div>
 						<h1>提交values</h1>
 						<pre>{JSON.stringify(getValues(), null, 4)}</pre>
 					</div>
