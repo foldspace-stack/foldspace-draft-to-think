@@ -146,11 +146,12 @@ export async function uploadAttachmentFiles(
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
+			const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
 			setMassage(
-				`是否为window平台:${isWindowsPlatform}`
+				`是否为window平台:${isWindowsPlatform} 读取路径:${readPath}`
 			);
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
-				isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath),
+				readPath,
 				app
 			);
 			if (fileBuffer) {
