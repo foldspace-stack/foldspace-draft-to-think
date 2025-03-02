@@ -185,3 +185,22 @@ export async function uploadAttachmentFiles(
 	// @ts-ignore
 	return new_attachments;
 }
+
+export function removeLinks(markdownText: string) {
+	const linkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+	return markdownText.replace(linkPattern, ""); // 直接替换为空字符串
+}
+
+export function removeImages(markdownText: string) {
+	const imagePattern = /!\[([^\]]*)\]\(([^)]*)\)/g;
+	return markdownText.replace(imagePattern, ""); // 直接替换为空字符串
+}
+
+export function removeFiles(markdownText: string) {
+	const filePattern = /\[([^\]]*)\]\(([^)]*\.(pdf|docx?|xlsx?|pptx?|zip|rar|txt))\)/g;
+	return markdownText.replace(filePattern, ""); // 直接替换为空字符串
+}
+
+export function removeAllAttachments(markdownText: string) {
+	return removeLinks(removeImages(removeFiles(markdownText)));
+}

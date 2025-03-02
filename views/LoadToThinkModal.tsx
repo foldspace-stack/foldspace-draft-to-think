@@ -16,6 +16,7 @@ import {
 import {
 	getAbsPathFromResourceUrl,
 	getAttachmentFilesFromMarkdown,
+	removeAllAttachments,
 	uploadAttachmentFiles,
 } from "./obsidain-helper";
 import { allUrlHasValueInArray } from "./urils";
@@ -828,6 +829,7 @@ export class LoadToThinkModal extends Modal {
 		this.root = createRoot(containerEl.children[1]);
 		const title = await this.getFileTitle();
 		const content = await this.getFileContent();
+		const contentWithoutAttachments = removeAllAttachments(content);
 		// let filePath = app.vault.getResourcePath( as TFile);
 		const filePath = app.workspace.getActiveFile()?.path;
 		// @ts-ignore
@@ -849,7 +851,7 @@ export class LoadToThinkModal extends Modal {
 					// @ts-ignore
 					title={title}
 					// @ts-ignore
-					content={content}
+					content={contentWithoutAttachments}
 					filePath={fileFullPath}
 					// @ts-ignore
 					attachments={attachments}
