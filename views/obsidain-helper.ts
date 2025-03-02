@@ -119,16 +119,9 @@ export function isWindows(): boolean {
 }
 export function linuxPathToWinPath(
 	linuxPath: string,
-	driveLetter = "C:"
 ): string {
 	// 替换所有的正斜杠为反斜杠
-	let winPath = linuxPath.replace(/\//g, "\\");
-
-	// 如果需要，添加盘符
-	if (winPath.startsWith("\\")) {
-		winPath = `${driveLetter}${winPath}`;
-	}
-
+	const winPath = linuxPath.replace(/\//g, "\\");
 	return winPath;
  }
 
