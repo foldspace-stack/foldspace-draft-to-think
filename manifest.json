@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "foldspace-obsidian-helper",
+	"name": "Foldspace Obsidian Helper",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Foldspace 自媒体辅助工具",
+	"author": "@foldspace",
+	"authorUrl": "https://foldspace.com",
+	"fundingUrl": "https://foldspace.com/support",
 	"isDesktopOnly": false
 }

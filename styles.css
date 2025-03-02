@@ -6,3 +6,9 @@ available in the app when your plugin is enabled.
 If your plugin does not need CSS, delete this file.
 
 */
+.foldspace-plugin-ribbon-class {
+    background-color: #000;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
