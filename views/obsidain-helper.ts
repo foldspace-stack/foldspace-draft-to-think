@@ -136,7 +136,7 @@ export async function uploadAttachmentFiles(
 	const isWindowsPlatform = isWindows();
 	const new_attachments = await Promise.all(
 		attachments.map(async (attachment) => {
-			const resourcePath = attachment.path;
+			const resourcePath = removeLeadingSlash(attachment.path);
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
