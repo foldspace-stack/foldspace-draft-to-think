@@ -140,7 +140,8 @@ export async function uploadAttachmentFiles(
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
-			const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
+//			const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
+			const readPath = decodeURIComponent(resourcePath);
 			setMassage(
 				`是否为window平台:${isWindowsPlatform} 读取路径:${readPath}`
 			);
