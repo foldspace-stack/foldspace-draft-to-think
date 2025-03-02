@@ -195,7 +195,8 @@ export async function uploadAttachmentFiles(
 export async function getAttachmentUrlsFromMarkdown(
 	markdownText: string,
 	app: App,
-	currentDocRootPath: string
+	currentDocRootPath: string,
+	setMassage: (message: string) => void
 ): Promise<
 	{ path: string; fileName: string; file: File | null; url: string | null }[]
 > {
@@ -206,7 +207,8 @@ export async function getAttachmentUrlsFromMarkdown(
 			const fileName = path.split("/").pop();
 			const fileBuffer: ArrayBuffer | null = await readBinaryResourceFileWithObsidian(
 				resourcePath,
-				app
+				app,
+				setMassage
 			);
 			if (fileBuffer) {
 				const blob = new Blob([fileBuffer]);
