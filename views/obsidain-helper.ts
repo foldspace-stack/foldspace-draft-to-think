@@ -72,6 +72,7 @@ export async function getAttachmentFilesFromMarkdown(
 			};
 		})
 	);
+	// @ts-ignore
 	return attachments;
 }
 
@@ -104,6 +105,7 @@ export async function uploadAttachmentFiles(
          return attachment;
 		})
 	);
+	// @ts-ignore
 	return new_attachments;
 }
 
@@ -124,6 +126,7 @@ export async function getAttachmentUrlsFromMarkdown(
 			if (fileBuffer) {
 				const blob = new Blob([fileBuffer]);
 				const file = new File([blob], `${fileName}`);
+				// @ts-ignore
 				const result=await uploadOneAttachments(file,fileName);
 				return {
 					path: resourcePath,

@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { md5 } from "js-md5";
 import { marked } from "marked";
 import { App, Modal, Notice } from "obsidian";
 import * as React from "react";
@@ -6,8 +7,8 @@ import { useState } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import md5 from "js-md5";
 
+import mitt from "mitt";
 import {
 	getChannels,
 	getObsidianToThinkGeneratePromptList,
@@ -16,11 +17,9 @@ import {
 import {
 	getAbsPathFromResourceUrl,
 	getAttachmentFilesFromMarkdown,
-	getAttachmentUrlsFromMarkdown,
 	uploadAttachmentFiles,
 } from "./obsidain-helper";
 import { allUrlHasValueInArray } from "./urils";
-import mitt from "mitt";
 marked.use({
 	async: false,
 	pedantic: false,
@@ -57,10 +56,12 @@ export const FoldSpaceHelperReactView = (
 ) => {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [attachments, setAttachments] = useState(props.attachments);
-	const [channels, setChannels] = useState<any[]>([]);
-	const [generatePromptList, setGeneratePromptList] = useState<any[]>([]);
+	// @ts-ignore
+	const [channels, setChannels] = useState<object[]>([]);
+	const [generatePromptList, setGeneratePromptList] = useState<object[]>([]);
 	const [uploadAttachmentModalIsVisible, setUploadAttachmentModalIsVisible] =
 		useState(false);
+	// @ts-ignore
 	const [modal2IsVisible, setModal2IsVisible] = useState(false);
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 	const [uploadAttachmentMessage, setUploadAttachmentMessage] = useState("");
@@ -108,14 +109,17 @@ export const FoldSpaceHelperReactView = (
 		},
 	});
 	const updateAttachments = async (attachments: any) => {
+		// @ts-ignore
 		if (attachments.length > 0 && !allUrlHasValueInArray(attachments)) {
 			setSubmitButtonDisabled(true);
 			new Notice("开始上传附件 中...");
+			// @ts-ignore
 			const new_attachments = await uploadAttachmentFiles(
 				attachments,
 				props.app,
 				props.currentDocRootPath
 			);
+			// @ts-ignore
 			setAttachments(new_attachments);
 			const documents = new_attachments.map((item: any) => item.url);
 			new Notice(
@@ -198,7 +202,7 @@ export const FoldSpaceHelperReactView = (
 							{...register("prompt_id")}
 							className="form-control"
 						>
-							{generatePromptList.map((item, index) => {
+							{generatePromptList.map((item: any, index) => {
 								return (
 									<option value={item.id} key={index}>
 										{item.id} - {item.name}
@@ -262,10 +266,16 @@ export const FoldSpaceHelperReactView = (
 							className="form-control"
 							{...register("channel_id")}
 						>
-							{channels.map((channel, index) => {
+							{channels.map((channel: any, index) => {
 								return (
-									<option value={channel.id} key={index}>
-										{channel.id} - {channel.name}
+									<option
+										// @ts-ignore
+										value={channel.id}
+										key={index}
+									>
+										{`${channel && channel.id}-${
+											channel && channel.name
+										}`}
 									</option>
 								);
 							})}
@@ -417,9 +427,11 @@ export const FoldSpaceHelperReactView = (
 								<p
 									style={{ marginLeft: 12 }}
 									key={index}
+									// @ts-ignore
 									alt={`${attachment}`}
 								>
 									<a
+										// @ts-ignore
 										href={attachment.url}
 										target="_blank"
 										style={{
@@ -528,7 +540,7 @@ export const FoldSpaceHelperReactView = (
 							disabled={submitButtonDisabled}
 							onClick={async () => {
 								const isValid = await trigger();
-                        new Notice(`开始验证表单, 验证结果:${isValid}`);
+								new Notice(`开始验证表单, 验证结果:${isValid}`);
 								if (isValid) {
 									// 验证通过，手动调用 handleSubmit
 									const data = getValues();
@@ -566,9 +578,7 @@ export const FoldSpaceHelperReactView = (
 									}
 								} else {
 									new Notice(
-										`验证失败 ${JSON.stringify(
-											errors
-										)} }`
+										`验证失败 ${JSON.stringify(errors)} }`
 									);
 								}
 							}}
@@ -596,7 +606,7 @@ export const FoldSpaceHelperReactView = (
 					<div>
 						<h1>上传附件中...</h1>
 						<p>{uploadAttachmentMessage}</p>
-                  <p>{JSON.stringify(getValues())}</p>
+						<p>{JSON.stringify(getValues())}</p>
 					</div>
 				</div>
 			)}
@@ -624,6 +634,7 @@ export const FoldSpaceHelperReactView = (
 /**
  * https://luhaifeng666.github.io/obsidian-plugin-docs-zh/zh2.0/getting-started/react.html
  */
+// @ts-ignore
 export class LoadToThinkModal extends Modal {
 	private root: Root;
 	private app: App;
@@ -655,21 +666,28 @@ export class LoadToThinkModal extends Modal {
 		const content = await this.getFileContent();
 		// let filePath = app.vault.getResourcePath( as TFile);
 		const filePath = app.workspace.getActiveFile()?.path;
+		// @ts-ignore
 		const resourceUrl = app.vault.adapter.getResourcePath(filePath);
+		// @ts-ignore
 		const currentDocRootPath = filePath.split("/").slice(0, -1).join("/");
 		const fileFullPath = getAbsPathFromResourceUrl(resourceUrl);
+		// @ts-ignore
 		const attachments = await getAttachmentFilesFromMarkdown(
+			// @ts-ignore
 			content,
 			app,
 			currentDocRootPath
 		);
-
+		// @ts-ignore
 		this.root.render(
 			<React.StrictMode>
 				<FoldSpaceHelperReactView
+					// @ts-ignore
 					title={title}
+					// @ts-ignore
 					content={content}
 					filePath={fileFullPath}
+					// @ts-ignore
 					attachments={attachments}
 					app={app}
 					currentDocRootPath={currentDocRootPath}
