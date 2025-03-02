@@ -107,6 +107,13 @@ export async function getAttachmentFilesFromMarkdown(
 	return attachments;
 }
 
+export function removeLeadingSlash(str: string): string {
+	if (str.startsWith("/")) {
+		return str.slice(1);
+	}
+	return str;
+}
+
 export async function uploadAttachmentFiles(
 	attachments: { path: string; fileName: string; file: File | null }[],
 	app: App,
@@ -171,7 +178,7 @@ export async function getAttachmentUrlsFromMarkdown(
 	const attachmentPaths = getAttachmentPathsFromMarkdown(markdownText);
 	const attachments = await Promise.all(
 		attachmentPaths.map(async (path) => {
-			const resourcePath = currentDocRootPath + "/" + path;
+			const resourcePath = removeLeadingSlash(currentDocRootPath + "/" + path);
 			const fileName = path.split("/").pop();
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
 				resourcePath,

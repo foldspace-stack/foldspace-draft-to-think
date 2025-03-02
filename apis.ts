@@ -1,5 +1,4 @@
 import axios from "axios";
-import mitt from "mitt";
 import { Notice } from "obsidian";
 
 export const ApiSdk = axios.create({
@@ -12,28 +11,6 @@ export const ApiSdk = axios.create({
 	},
 });
 
-export const uploadAttachments = async (attachments: File[], fileName: string) => {
-	const formData = new FormData();
-	attachments.forEach((attachment) => {
-		formData.append("attachments", attachment);
-	});
-	const emitter = mitt();
-	const response = await ApiSdk.post(
-		"/bff/v1/apps/obsidian/attachments/upload",
-		formData,
-		{
-			headers: {
-				"Content-Type": "multipart/form-data",
-			},
-			onUploadProgress: (progressEvent) => {
-				const { loaded, total } = progressEvent;
-				const percentCompleted = Math.round((loaded * 100) / total);
-				emitter.emit("UPLOAD_ATTACHMENT", { message: `上传进度: ${percentCompleted}% ${fileName}` });
-			},
-		}
-	);
-	return response.data;
-};
 
 export const uploadOneAttachments = async (file: File, fileName: string,
 	setMassage: (message: string) => void
@@ -86,6 +63,6 @@ export const runDifyFlow = async (values: any, setMassage: (message: string) => 
 	new Notice(`开始运行流程 参数\n${JSON.stringify(valuesTmp)}`);
 	setMassage(`开始运行流程 /bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow`);
 	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow", values);
-	setMassage(`运行流程完成 结果\n${JSON.stringify(response.data)}`);
+	setMassage(`运行流程完成 结果\n${JSON.stringify(response.data,null,4)}`);
 	return response.data;
 };
