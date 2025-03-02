@@ -140,7 +140,7 @@ export async function uploadAttachmentFiles(
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
-//			const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
+			//const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
 			const readPath = decodeURIComponent(resourcePath);
 			setMassage(
 				`是否为window平台:${isWindowsPlatform} 读取路径:${readPath}`
@@ -184,46 +184,4 @@ export async function uploadAttachmentFiles(
 	);
 	// @ts-ignore
 	return new_attachments;
-}
-
-export async function getAttachmentUrlsFromMarkdown(
-	markdownText: string,
-	app: App,
-	currentDocRootPath: string,
-	setMassage: (message: string) => void
-): Promise<
-	{ path: string; fileName: string; file: File | null; url: string | null }[]
-> {
-	const attachmentPaths = getAttachmentPathsFromMarkdown(markdownText);
-	const attachments = await Promise.all(
-		attachmentPaths.map(async (path) => {
-			const resourcePath = removeLeadingSlash(currentDocRootPath + "/" + path);
-			const fileName = path.split("/").pop();
-			const fileBuffer: ArrayBuffer | null = await readBinaryResourceFileWithObsidian(
-				resourcePath,
-				app,
-				setMassage
-			);
-			if (fileBuffer) {
-				const blob = new Blob([fileBuffer]);
-				const file = new File([blob], `${fileName}`);
-				// @ts-ignore
-				const result = await uploadOneAttachments(file, fileName);
-				return {
-					path: resourcePath,
-					fileName: fileName,
-					file: file,
-					...result[0],
-				};
-			} else {
-				return {
-					path: resourcePath,
-					fileName: fileName,
-					file: null,
-				};
-			}
-		})
-	);
-	new Notice(`attachments:${JSON.stringify(attachments)}`);
-	return attachments;
 }
