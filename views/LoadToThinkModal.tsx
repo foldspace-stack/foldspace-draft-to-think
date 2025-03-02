@@ -71,11 +71,15 @@ export const FoldSpaceHelperReactView = (
 	React.useEffect(() => {
 		getChannels().then((res) => {
 			setChannels(res);
+		}).catch(err=>{
+			alert(err)
 		});
 	}, []);
 	React.useEffect(() => {
 		getObsidianToThinkGeneratePromptList().then((res) => {
 			setGeneratePromptList(res);
+		}).catch(err=>{
+			alert(err)
 		});
 	}, []);
 	React.useEffect(() => {
