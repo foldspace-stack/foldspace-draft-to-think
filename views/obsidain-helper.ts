@@ -139,6 +139,7 @@ export async function uploadAttachmentFiles(
 ): Promise<
 	{ path: string; fileName: string; file: File | null; url: string | null }[]
 > {
+	const isWindowsPlatform = isWindows();
 	const new_attachments = await Promise.all(
 		attachments.map(async (attachment) => {
 			const resourcePath = attachment.path;
@@ -146,10 +147,10 @@ export async function uploadAttachmentFiles(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
 			setMassage(
-				`是否为window平台:${isWindows()}`
+				`是否为window平台:${isWindowsPlatform}`
 			);
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
-				decodeURIComponent(resourcePath),
+				isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath),
 				app
 			);
 			if (fileBuffer) {
