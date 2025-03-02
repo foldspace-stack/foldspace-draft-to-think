@@ -1,1 +1,8 @@
-.foldspace-plugin-ribbon-class{background-color:#000;background-size:16px 16px;background-repeat:no-repeat;background-position:center}
+/* styles.css */
+.foldspace-plugin-ribbon-class {
+  background-color: #000;
+  background-size: 16px 16px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/*# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsic3R5bGVzLmNzcyJdLAogICJzb3VyY2VzQ29udGVudCI6IFsiLypcblxuVGhpcyBDU1MgZmlsZSB3aWxsIGJlIGluY2x1ZGVkIHdpdGggeW91ciBwbHVnaW4sIGFuZFxuYXZhaWxhYmxlIGluIHRoZSBhcHAgd2hlbiB5b3VyIHBsdWdpbiBpcyBlbmFibGVkLlxuXG5JZiB5b3VyIHBsdWdpbiBkb2VzIG5vdCBuZWVkIENTUywgZGVsZXRlIHRoaXMgZmlsZS5cblxuKi9cbi5mb2xkc3BhY2UtcGx1Z2luLXJpYmJvbi1jbGFzcyB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzAwMDtcbiAgICBiYWNrZ3JvdW5kLXNpemU6IDE2cHggMTZweDtcbiAgICBiYWNrZ3JvdW5kLXJlcGVhdDogbm8tcmVwZWF0O1xuICAgIGJhY2tncm91bmQtcG9zaXRpb246IGNlbnRlcjtcbn1cbiJdLAogICJtYXBwaW5ncyI6ICI7QUFRQTtBQUNJO0FBQ0E7QUFDQTtBQUNBO0FBQUE7IiwKICAibmFtZXMiOiBbXQp9Cg== */

@@ -54,28 +54,29 @@ export function getAbsPathFromResourceUrl(resourceUrl: string) {
 	);
 }
 
-export async function readResourceFile(
+export async function readBinaryResourceFileWithObsidian(
 	filePath: string,
-	app: App
+	app: App,
+	setMassage: (message: string) => void
 ): Promise<ArrayBuffer | null> {
 	// 获取文件对象
 	const file = app.vault.getAbstractFileByPath(filePath);
 	if (file && file instanceof TFile) {
 		// 如果文件存在并且是 File 类型
-		new Notice(`${filePath} 读取中.....`);
+		setMassage(`${filePath} 读取中.....`);
 
 		try {
 			// 读取文件内容
 			const data: ArrayBuffer = await app.vault.readBinary(file);
 			console.log("File content:", data);
-			new Notice(`${filePath} 读取完成 ${data.byteLength}字节`);
+			setMassage(`${filePath} 读取完成 ${data.byteLength}字节`);
 			return data; // 返回文件内容
 		} catch (error) {
-			new Notice(`${filePath} 读取失败`);
+			setMassage(`${filePath} 读取失败`);
 			console.error("Error reading file:", error);
 		}
 	} else {
-		new Notice(`${filePath} 文件未找到`);
+		setMassage(`${filePath} 文件未找到`);
 		console.error("File not found or not a valid file type");
 	}
 	return null;
@@ -150,9 +151,10 @@ export async function uploadAttachmentFiles(
 			setMassage(
 				`是否为window平台:${isWindowsPlatform} 读取路径:${readPath}`
 			);
-			const fileBuffer: ArrayBuffer | null = await readResourceFile(
+			const fileBuffer: ArrayBuffer | null = await readBinaryResourceFileWithObsidian(
 				readPath,
-				app
+				app,
+				setMassage
 			);
 			if (fileBuffer) {
 				setMassage(
@@ -202,7 +204,7 @@ export async function getAttachmentUrlsFromMarkdown(
 		attachmentPaths.map(async (path) => {
 			const resourcePath = removeLeadingSlash(currentDocRootPath + "/" + path);
 			const fileName = path.split("/").pop();
-			const fileBuffer: ArrayBuffer | null = await readResourceFile(
+			const fileBuffer: ArrayBuffer | null = await readBinaryResourceFileWithObsidian(
 				resourcePath,
 				app
 			);
