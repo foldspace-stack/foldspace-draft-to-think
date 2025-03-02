@@ -122,12 +122,19 @@ export async function uploadAttachmentFiles(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
-				resourcePath,
+				decodeURIComponent(resourcePath),
 				app
 			);
-			setMassage(
-				`${attachment.fileName} 读取完成 ${fileBuffer?.byteLength}字节`
-			);
+			if (fileBuffer) {
+				setMassage(
+					`${attachment.path} 读取完成 ${fileBuffer?.byteLength}字节`
+				);
+			} else {
+				setMassage(
+					`${attachment.path} 读取失败 `
+				);
+				return attachment;
+			}
 			setMassage(
 				"开始上传附件 " + attachment.fileName + " 中..."
 			);

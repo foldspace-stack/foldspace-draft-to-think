@@ -65,7 +65,7 @@ export const FoldSpaceHelperReactView = (
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 	const [runFlowMessages, setRunFlowMessages] = useState<string[]>([]);
 	const addRunFlowMessageRecord = (message: string) => {
-		setRunFlowMessages([...runFlowMessages, message]);
+		setRunFlowMessages((prev) => [...prev, message]);
 	};
 	React.useEffect(() => {
 		setAttachments(props.attachments);
@@ -597,7 +597,7 @@ export const FoldSpaceHelperReactView = (
 										addRunFlowMessageRecord(
 											"开始运行流程..."
 										);
-										await runDifyFlow(data);
+										await runDifyFlow(data, addRunFlowMessageRecord);
 										addRunFlowMessageRecord(
 											"运行流程完成..."
 										);

@@ -72,7 +72,7 @@ export const getObsidianToThinkGeneratePromptList = async () => {
 	return response.data;
 };
 
-export const runDifyFlow = async (values: any) => {
+export const runDifyFlow = async (values: any, setMassage: (message: string) => void) => {
 	values.channel_id = parseInt(values.channel_id);
 	values.prompt_id = parseInt(values.prompt_id);
 	values.knowledge_is_required = parseInt(values.knowledge_is_required);
@@ -84,7 +84,8 @@ export const runDifyFlow = async (values: any) => {
 	const valuesTmp = { ...values }
 	valuesTmp.doc_content = undefined
 	new Notice(`开始运行流程 参数\n${JSON.stringify(valuesTmp)}`);
-	alert(JSON.stringify(valuesTmp));
+	setMassage(`开始运行流程 /bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow`);
 	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow", values);
+	setMassage(`运行流程完成 结果\n${JSON.stringify(response.data)}`);
 	return response.data;
 };
