@@ -704,7 +704,7 @@ export const FoldSpaceHelperReactView = (
 								|{" "}
 							</span>
 							<a
-								href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
+								href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/p2kg9yuerbjozs8/mua5zut94cdsj2v/vwcym9tcdgqfsdhh/view"
 								target="_blank"
 								style={{
 									textDecoration: "none",
