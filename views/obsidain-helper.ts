@@ -1,8 +1,7 @@
 import { uploadOneAttachments } from "apis";
 import { App, Notice, TFile } from "obsidian";
-import mitt from 'mitt';
 
-export function getAttachmentPathsFromMarkdown(markdownText: string) {
+export function getAttachmentPathsFromMarkdown(markdownText: string): string[] {
 	const imageRegex = /!\[.*?\]\((.*?)\)|<img src="(.*?)"/g;
 	const linkRegex = /\[.*?\]\((.*?)\)/g;
 	const attachmentPaths = [];
@@ -18,7 +17,35 @@ export function getAttachmentPathsFromMarkdown(markdownText: string) {
 		attachmentPaths.push(match[1]);
 	}
 
-	return attachmentPaths;
+	return attachmentPaths
+		.filter((path) => path !== null)
+		.filter((path) => path.length > 0)
+		.filter((path) => {
+			const suffix = path.split(".").pop();
+			const arr = [
+				"TXT",
+				"MD",
+				"MARKDOWN",
+				"PDF",
+				"HTML",
+				"XLSX",
+				"XLS",
+				"DOCX",
+				"CSV",
+				"EML",
+				"MSG",
+				"PPTX",
+				"PPT",
+				"XML",
+				"EPUB",
+			];
+			const fileType = suffix.toUpperCase();
+			return arr.indexOf(fileType) >= 0;
+		})
+		.filter(
+			(path) =>
+				!(path.startsWith("http://") || path.startsWith("htts://"))
+		);
 }
 
 export function getAbsPathFromResourceUrl(resourceUrl: string) {
@@ -35,20 +62,20 @@ export async function readResourceFile(
 	const file = app.vault.getAbstractFileByPath(filePath);
 	if (file && file instanceof TFile) {
 		// 如果文件存在并且是 File 类型
-      new Notice(`${filePath} 读取中.....`);
+		new Notice(`${filePath} 读取中.....`);
 
 		try {
 			// 读取文件内容
 			const data: ArrayBuffer = await app.vault.readBinary(file);
 			console.log("File content:", data);
-         new Notice(`${filePath} 读取完成 ${data.byteLength}字节`);
+			new Notice(`${filePath} 读取完成 ${data.byteLength}字节`);
 			return data; // 返回文件内容
 		} catch (error) {
-         new Notice(`${filePath} 读取失败`);
+			new Notice(`${filePath} 读取失败`);
 			console.error("Error reading file:", error);
 		}
 	} else {
-      new Notice(`${filePath} 文件未找到`);
+		new Notice(`${filePath} 文件未找到`);
 		console.error("File not found or not a valid file type");
 	}
 	return null;
@@ -58,17 +85,21 @@ export async function getAttachmentFilesFromMarkdown(
 	markdownText: string,
 	app: App,
 	currentDocRootPath: string
-): Promise<{ path: string; fileName: string; file: File | null; url: string | null }[]> {
+): Promise<
+	{ path: string; fileName: string; file: File | null; url: string | null }[]
+> {
 	const attachmentPaths = getAttachmentPathsFromMarkdown(markdownText);
 	const attachments = await Promise.all(
 		attachmentPaths.map(async (path) => {
 			const resourcePath = currentDocRootPath + "/" + path;
 			const fileName = path.split("/").pop();
-         return {
+			return {
 				path: resourcePath,
-				fileName: fileName,
+				fileName: decodeURIComponent(fileName),
+				// @ts-ignore
 				file: null,
-            url: null,
+				// @ts-ignore
+				url: null,
 			};
 		})
 	);
@@ -76,33 +107,47 @@ export async function getAttachmentFilesFromMarkdown(
 	return attachments;
 }
 
-
 export async function uploadAttachmentFiles(
 	attachments: { path: string; fileName: string; file: File | null }[],
 	app: App,
-	currentDocRootPath: string
-) :Promise<{ path: string; fileName: string; file: File | null; url: string | null }[]>{
-   const emitter = mitt();
-   const new_attachments = await Promise.all(
+	currentDocRootPath: string,
+	setMassage: (message: string) => void
+): Promise<
+	{ path: string; fileName: string; file: File | null; url: string | null }[]
+> {
+	const new_attachments = await Promise.all(
 		attachments.map(async (attachment) => {
-         const resourcePath = attachment.path;
-         emitter.emit("UPLOAD_ATTACHMENT",{message:"开始上传附件 "+attachment.fileName});
+			const resourcePath = attachment.path;
+			setMassage(
+				"开始上传附件 " + attachment.fileName + " 中..."
+			);
 			const fileBuffer: ArrayBuffer | null = await readResourceFile(
 				resourcePath,
 				app
 			);
-         new Notice(`${attachment.fileName} 读取完成 ${fileBuffer?.byteLength}字节`);
-         if (fileBuffer) {
-            const blob = new Blob([fileBuffer]);
-            const file = new File([blob], `${attachment.fileName}`);
-            const result=await uploadOneAttachments(file,attachment.fileName);
-            emitter.emit("UPLOAD_ATTACHMENT",{message:"开始上传附件 "+attachment.fileName});
-            return {
-               ...attachment,
-               url: result[0].url,
-            };
-         }
-         return attachment;
+			setMassage(
+				`${attachment.fileName} 读取完成 ${fileBuffer?.byteLength}字节`
+			);
+			setMassage(
+				"开始上传附件 " + attachment.fileName + " 中..."
+			);
+			if (fileBuffer) {
+				const blob = new Blob([fileBuffer]);
+				const file = new File([blob], `${attachment.fileName}`);
+				const result = await uploadOneAttachments(
+					file,
+					attachment.fileName,
+					setMassage
+				);
+				setMassage(
+					"上传附件 " + attachment.fileName + " 完成 " + result[0].url
+				);
+				return {
+					...attachment,
+					url: result[0].url,
+				};
+			}
+			return attachment;
 		})
 	);
 	// @ts-ignore
@@ -113,7 +158,9 @@ export async function getAttachmentUrlsFromMarkdown(
 	markdownText: string,
 	app: App,
 	currentDocRootPath: string
-): Promise<{ path: string; fileName: string; file: File | null; url: string | null }[]> {
+): Promise<
+	{ path: string; fileName: string; file: File | null; url: string | null }[]
+> {
 	const attachmentPaths = getAttachmentPathsFromMarkdown(markdownText);
 	const attachments = await Promise.all(
 		attachmentPaths.map(async (path) => {
@@ -127,12 +174,12 @@ export async function getAttachmentUrlsFromMarkdown(
 				const blob = new Blob([fileBuffer]);
 				const file = new File([blob], `${fileName}`);
 				// @ts-ignore
-				const result=await uploadOneAttachments(file,fileName);
+				const result = await uploadOneAttachments(file, fileName);
 				return {
 					path: resourcePath,
 					fileName: fileName,
 					file: file,
-               ...result[0]
+					...result[0],
 				};
 			} else {
 				return {

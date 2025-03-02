@@ -8,7 +8,6 @@ import { createRoot, Root } from "react-dom/client";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import mitt from "mitt";
 import {
 	getChannels,
 	getObsidianToThinkGeneratePromptList,
@@ -59,38 +58,37 @@ export const FoldSpaceHelperReactView = (
 	// @ts-ignore
 	const [channels, setChannels] = useState<object[]>([]);
 	const [generatePromptList, setGeneratePromptList] = useState<object[]>([]);
-	const [uploadAttachmentModalIsVisible, setUploadAttachmentModalIsVisible] =
+	const [messageModalIsVisible, setMessageModalIsVisible] =
 		useState(false);
 	// @ts-ignore
 	const [modal2IsVisible, setModal2IsVisible] = useState(false);
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
-	const [uploadAttachmentMessage, setUploadAttachmentMessage] = useState("");
+	const [runFlowMessages, setRunFlowMessages] = useState<string[]>([]);
+	const addRunFlowMessageRecord = (message: string) => {
+		setRunFlowMessages([...runFlowMessages, message]);
+	};
 	React.useEffect(() => {
 		setAttachments(props.attachments);
 	}, [props.attachments]);
 	React.useEffect(() => {
-		getChannels().then((res) => {
-			setChannels(res);
-		}).catch(err=>{
-			alert(err)
-		});
+		getChannels()
+			.then((res) => {
+				setChannels(res);
+			})
+			.catch((err) => {
+				alert(err);
+			});
 	}, []);
 	React.useEffect(() => {
-		getObsidianToThinkGeneratePromptList().then((res) => {
-			setGeneratePromptList(res);
-		}).catch(err=>{
-			alert(err)
-		});
-	}, []);
-	React.useEffect(() => {
-		const emitter = mitt();
-		emitter.on("UPLOAD_ATTACHMENT", (data: any) => {
-			console.log(data);
-			setUploadAttachmentMessage(data.message);
-		});
-		return () => {
-			emitter.off("UPLOAD_ATTACHMENT");
-		};
+		getObsidianToThinkGeneratePromptList()
+			.then((res) => {
+				setGeneratePromptList(res);
+			})
+			.catch((err) => {
+				addRunFlowMessageRecord(
+					`获取提示词失败 ${err}\n${err.stack}`
+				);
+			});
 	}, []);
 	const {
 		register,
@@ -112,21 +110,27 @@ export const FoldSpaceHelperReactView = (
 			documents: [],
 		},
 	});
-	const updateAttachments = async (attachments: any) => {
+	// @ts-ignore
+	const updateAttachments = async (
+		// @ts-ignore
+		attachments: any[],
+		setMassage: (message: string) => void
+	) => {
 		// @ts-ignore
 		if (attachments.length > 0 && !allUrlHasValueInArray(attachments)) {
 			setSubmitButtonDisabled(true);
-			new Notice("开始上传附件 中...");
+			setMassage("开始上传附件 中...");
 			// @ts-ignore
 			const new_attachments = await uploadAttachmentFiles(
 				attachments,
 				props.app,
-				props.currentDocRootPath
+				props.currentDocRootPath,
+				setMassage
 			);
 			// @ts-ignore
 			setAttachments(new_attachments);
 			const documents = new_attachments.map((item: any) => item.url);
-			new Notice(
+			setMassage(
 				`上传附件完成 ${documents.length} 个附件 ${JSON.stringify(
 					documents
 				)}`
@@ -134,7 +138,7 @@ export const FoldSpaceHelperReactView = (
 			setValue("documents", documents);
 			setSubmitButtonDisabled(false);
 		} else {
-			new Notice(`无需上传 ${attachments.length} 个附件`);
+			setMassage(`无需上传 ${attachments.length} 个附件`);
 		}
 	};
 	const onSubmit = (data: any) => {
@@ -541,6 +545,16 @@ export const FoldSpaceHelperReactView = (
 						<button
 							className="btn btn-primary"
 							type="button"
+							style={{ marginRight: 12 }}
+							onClick={() => {
+								setModal2IsVisible(true);
+							}}
+						>
+							显示props
+						</button>
+						<button
+							className="btn btn-primary"
+							type="button"
 							disabled={submitButtonDisabled}
 							onClick={async () => {
 								const isValid = await trigger();
@@ -550,39 +564,60 @@ export const FoldSpaceHelperReactView = (
 									const data = getValues();
 									if (data.if_create_vector_db === "1") {
 										try {
-											setUploadAttachmentModalIsVisible(
+											setRunFlowMessages([]);
+											setMessageModalIsVisible(
 												true
 											);
+											addRunFlowMessageRecord(
+												"开始上传附件..."
+											);
 											await updateAttachments(
-												attachments
+												attachments,
+												addRunFlowMessageRecord
+											);
+											addRunFlowMessageRecord(
+												"上传附件完成..."
 											);
 										} catch (error) {
-											alert(`上传附件失败 ${error}`);
+											addRunFlowMessageRecord(
+												`上传附件失败 ${error}\n${error.stack}`
+											);
 											console.error(
 												"上传附件失败",
 												error
 											);
 										} finally {
 											setSubmitButtonDisabled(false);
-											setUploadAttachmentModalIsVisible(
-												false
-											);
 										}
 									}
 									try {
 										setSubmitButtonDisabled(true);
 										//setModal1IsVisible(true);
 										const data = getValues();
+										addRunFlowMessageRecord(
+											"开始运行流程..."
+										);
 										await runDifyFlow(data);
+										addRunFlowMessageRecord(
+											"运行流程完成..."
+										);
 									} catch (error) {
 										console.error("运行流程失败", error);
-										alert(`运行流程失败 ${error}`);
+										if (error instanceof Error) {
+											addRunFlowMessageRecord(
+												`${error.message}\n运行流程失败 ${error.stack}`
+											);
+										} else {
+											addRunFlowMessageRecord(
+												`运行流程失败 ${error}`
+											);
+										}
 									} finally {
 										setSubmitButtonDisabled(false);
 									}
 								} else {
 									new Notice(
-										`验证失败 ${JSON.stringify(errors)} }`
+										`验证失败 ${JSON.stringify(errors)} `
 									);
 								}
 							}}
@@ -592,7 +627,7 @@ export const FoldSpaceHelperReactView = (
 					</div>
 				</div>
 			</form>
-			{uploadAttachmentModalIsVisible && (
+			{messageModalIsVisible && (
 				<div
 					style={{
 						position: "absolute",
@@ -604,13 +639,26 @@ export const FoldSpaceHelperReactView = (
 						height: "100%",
 						backgroundColor: "#f0f0f0",
 						zIndex: 1000,
-						opacity: 0.5,
+						opacity: 1,
 					}}
 				>
 					<div>
-						<h1>上传附件中...</h1>
-						<p>{uploadAttachmentMessage}</p>
-						<p>{JSON.stringify(getValues())}</p>
+						<button
+							style={{ float: "right" }}
+							onClick={() => {
+								setMessageModalIsVisible(false);
+							}}
+						>
+							关闭
+						</button>
+					</div>
+					<div>
+						<h1>执行日志</h1>
+						<pre>{runFlowMessages.join("\n")}</pre>
+					</div>
+					<div>
+						<h1>提交values</h1>
+						<pre>{JSON.stringify(getValues(), null, 4)}</pre>
 					</div>
 				</div>
 			)}
@@ -626,10 +674,43 @@ export const FoldSpaceHelperReactView = (
 						height: "100%",
 						backgroundColor: "#f0f0f0",
 						zIndex: 1000,
-						opacity: 0.5,
 					}}
 				>
-					hello
+					<div>
+						<button
+							style={{ float: "right" }}
+							onClick={() => {
+								setModal2IsVisible(false);
+							}}
+						>
+							关闭
+						</button>
+					</div>
+					<div>
+						<h1>props</h1>
+						<p>
+							{JSON.stringify(
+								{
+									attachments: attachments,
+									filePath: props.filePath,
+									// @ts-ignore
+									resourceUrl: props.resourceUrl,
+									// @ts-ignore
+									currentDocRootPath:
+										props.currentDocRootPath,
+									// @ts-ignore
+									fileFullPath: props.fileFullPath,
+									// @ts-ignore
+								},
+								null,
+								4
+							)}
+						</p>
+					</div>
+					<div>
+						<h1>values</h1>
+						<pre>{JSON.stringify(getValues(), null, 4)}</pre>
+					</div>
 				</div>
 			)}
 		</div>

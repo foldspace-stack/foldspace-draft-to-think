@@ -12,12 +12,12 @@ export const ApiSdk = axios.create({
 	},
 });
 
-export const uploadAttachments = async (attachments: File[],fileName:string) => {
+export const uploadAttachments = async (attachments: File[], fileName: string) => {
 	const formData = new FormData();
 	attachments.forEach((attachment) => {
 		formData.append("attachments", attachment);
 	});
-   const emitter = mitt();
+	const emitter = mitt();
 	const response = await ApiSdk.post(
 		"/bff/v1/apps/obsidian/attachments/upload",
 		formData,
@@ -28,31 +28,37 @@ export const uploadAttachments = async (attachments: File[],fileName:string) => 
 			onUploadProgress: (progressEvent) => {
 				const { loaded, total } = progressEvent;
 				const percentCompleted = Math.round((loaded * 100) / total);
-            emitter.emit("UPLOAD_ATTACHMENT",{message:`上传进度: ${percentCompleted}% ${fileName}`});
+				emitter.emit("UPLOAD_ATTACHMENT", { message: `上传进度: ${percentCompleted}% ${fileName}` });
 			},
 		}
 	);
 	return response.data;
 };
 
-export const uploadOneAttachments = async (file: File, fileName: string) => {
+export const uploadOneAttachments = async (file: File, fileName: string,
+	setMassage: (message: string) => void
+) => {
 	const formData = new FormData();
 	formData.append("files", file, fileName);
 	const url = `http://openapi.inner.foldspace.cn/bff/v1/apps/obsidian/attachments/upload`;
-	new Notice(`开始Ajax上传文件: ${fileName} size:${file.size} =>${url}`);
+	setMassage(`开始Ajax上传文件: ${fileName} size:${file.size} =>${url}`);
 	//const response = await uploadFile(formData, url);
-   const response = await await axios.post(url, formData, {
-      headers: {
-          'Content-Type': 'multipart/form-data', // 设置请求头
-      },
-      onDownloadProgress: (progressEvent) => {
-         const { loaded, total } = progressEvent;
-         const percentCompleted = Math.round((loaded * 100) / total);
-         
-         console.log(`下载进度: ${percentCompleted}%`);
-     },
-  });
-	new Notice(`上传文件: ${fileName} 完成 ${JSON.stringify(response.data)}`);
+	const response = await await axios.post(url, formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data', // 设置请求头
+		},
+		onDownloadProgress: (progressEvent) => {
+			const { loaded, total } = progressEvent;
+			const percentCompleted = Math.round((loaded * 100) / total);
+
+			setMassage(`上传文件: ${fileName} 进度 ${percentCompleted}%`);
+		},
+	}).catch(err => {
+		setMassage(`上传文件: ${fileName} 失败 ${err}`);
+	});
+	//@ts-ignore
+	setMassage(`上传文件: ${fileName} 完成 ${JSON.stringify(response.data)}`);
+	//@ts-ignore
 	return response.data;
 };
 
@@ -67,17 +73,18 @@ export const getObsidianToThinkGeneratePromptList = async () => {
 };
 
 export const runDifyFlow = async (values: any) => {
-   values.channel_id = parseInt(values.channel_id);
-   values.prompt_id = parseInt(values.prompt_id);
-   values.knowledge_is_required = parseInt(values.knowledge_is_required);
-   values.documents = values.documents || [];
-   values.if_run_doc_intro_workflow = parseInt(values.if_run_doc_intro_workflow);
-   values.if_create_vector_db=parseInt(values.if_create_vector_db);
-   values.knowledge_is_required = values.if_create_vector_db >0 ?1:0;
-   const valuesTmp= {...values}
-   valuesTmp.doc_content=undefined
-   new Notice(`开始运行流程 参数\n${JSON.stringify(valuesTmp)}`);
-   alert(JSON.stringify(valuesTmp));
-	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow",values);
+	values.channel_id = parseInt(values.channel_id);
+	values.prompt_id = parseInt(values.prompt_id);
+	values.knowledge_is_required = parseInt(values.knowledge_is_required);
+	values.documents = values.documents || [];
+
+	values.if_run_doc_intro_workflow = parseInt(values.if_run_doc_intro_workflow);
+	values.if_create_vector_db = parseInt(values.if_create_vector_db);
+	values.knowledge_is_required = values.if_create_vector_db > 0 ? 1 : 0;
+	const valuesTmp = { ...values }
+	valuesTmp.doc_content = undefined
+	new Notice(`开始运行流程 参数\n${JSON.stringify(valuesTmp)}`);
+	alert(JSON.stringify(valuesTmp));
+	const response = await ApiSdk.post("/bff/v1/apps/dify/tasks/do-obsidian-to-think-workflow", values);
 	return response.data;
 };
