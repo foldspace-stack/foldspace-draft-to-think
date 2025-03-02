@@ -3,8 +3,7 @@ import mitt from "mitt";
 import { Notice } from "obsidian";
 
 export const ApiSdk = axios.create({
-	//baseURL: "http://openapi.inner.foldspace.cn",
-   baseURL: "http://127.0.0.1:8000",
+	baseURL: "http://openapi.inner.foldspace.cn",
 
 	timeout: 1000 * 60 * 5,
 	headers: {
