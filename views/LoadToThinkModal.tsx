@@ -115,6 +115,7 @@ export const FoldSpaceHelperReactView = (
 			partitioned_chunk_size: 1000,
 			knowledge_chunk_size: 500,
 			knowledge_chunk_overlap: 100,
+			knowledge_query_limit:2,
 			documents: [],
 		},
 	});
@@ -387,7 +388,7 @@ export const FoldSpaceHelperReactView = (
 						</p>
 					)}
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+				<div className="row" style={{ width: "100%", marginBottom: 0,fontSize:10 }}>
 					<div
 						className="col"
 						style={{ display: "inline-block", width: "30%" }}
@@ -401,7 +402,7 @@ export const FoldSpaceHelperReactView = (
 								textAlign: "right",
 							}}
 						>
-							知识库分块大小
+							知识库:分块大小
 						</div>
 						<div
 							className="col"
@@ -428,7 +429,7 @@ export const FoldSpaceHelperReactView = (
 								textAlign: "right",
 							}}
 						>
-							知识库分块overlap大小
+							Overlap大小
 						</div>
 						<div
 							className="col"
@@ -455,7 +456,7 @@ export const FoldSpaceHelperReactView = (
 								textAlign: "right",
 							}}
 						>
-							知识库匹配数量
+							匹配数量
 						</div>
 						<div
 							className="col"
@@ -477,6 +478,11 @@ export const FoldSpaceHelperReactView = (
 					{errors?.knowledge_chunk_overlap && (
 						<p style={{ color: "red" }}>
 							{errors.knowledge_chunk_overlap.message}
+						</p>
+					)}
+					{errors?.knowledge_query_limit && (
+						<p style={{ color: "red" }}>
+							{errors.knowledge_query_limit.message}
 						</p>
 					)}
 				</div>
