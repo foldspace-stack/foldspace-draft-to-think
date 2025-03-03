@@ -51,11 +51,16 @@ const formSchema = z.object({
 	if_create_vector_db: z.string().optional(),
 	knowledge_chunk_size: z
 		.number()
-		.min(100, { message: "知识块大小必须大于100" }).max(2000, { message: "知识块大小必须小于2000" }),
+		.min(100, { message: "知识块大小必须大于100" })
+		.max(2000, { message: "知识块大小必须小于2000" }),
 	knowledge_chunk_overlap: z
 		.number()
-		.min(10, { message: "知识块重叠大小必须大于10" }).max(300, { message: "知识块重叠大小必须小于300" }),
-	knowledge_query_limit: z.number().min(1, { message: "知识库查询限制必须大于1" }).max(10, { message: "知识库查询限制必须小于10" }),
+		.min(10, { message: "知识块重叠大小必须大于10" })
+		.max(300, { message: "知识块重叠大小必须小于300" }),
+	knowledge_query_limit: z
+		.number()
+		.min(1, { message: "知识库查询限制必须大于1" })
+		.max(10, { message: "知识库查询限制必须小于10" }),
 	if_run_doc_intro_workflow: z.string().optional(),
 });
 export const FoldSpaceHelperReactView = (
@@ -99,6 +104,7 @@ export const FoldSpaceHelperReactView = (
 	const {
 		register,
 		handleSubmit,
+		watch,
 		formState: { errors },
 		trigger,
 		getValues,
@@ -109,16 +115,17 @@ export const FoldSpaceHelperReactView = (
 			doc_title: props.title,
 			doc_content: props.content,
 			partitioned_mode: "按段落",
-			vector_uuid: getCurrentDateTime()+"_"+md5(props.content),
+			vector_uuid: getCurrentDateTime() + "_" + md5(props.content),
 			if_create_vector_db: "1",
 			if_run_doc_intro_workflow: "0",
 			partitioned_chunk_size: 1000,
 			knowledge_chunk_size: 500,
 			knowledge_chunk_overlap: 100,
-			knowledge_query_limit:1,
+			knowledge_query_limit: 1,
 			documents: [],
 		},
 	});
+	const partitioned_mode = watch("partitioned_mode");
 	// @ts-ignore
 	const updateAttachments = async (
 		// @ts-ignore
@@ -157,7 +164,10 @@ export const FoldSpaceHelperReactView = (
 		new Notice(`form:${JSON.stringify(data)}`);
 		// 在这里处理表单提交
 	};
-	const numberFieldOptions = { valueAsNumber: true ,parse: (value: any) => Number(value)}
+	const numberFieldOptions = {
+		valueAsNumber: true,
+		parse: (value: any) => Number(value),
+	};
 	return (
 		<div
 			style={{
@@ -173,7 +183,7 @@ export const FoldSpaceHelperReactView = (
 						<h1>FoldSpece助手</h1>
 					</center>
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 4}}>
+				<div className="row" style={{ width: "100%", marginBottom: 4 }}>
 					<input
 						style={{ width: "100%" }}
 						type="text"
@@ -187,7 +197,7 @@ export const FoldSpaceHelperReactView = (
 						</p>
 					)}
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 4}}>
+				<div className="row" style={{ width: "100%", marginBottom: 4 }}>
 					<textarea
 						style={{ width: "100%", height: 300 }}
 						className="form-control"
@@ -200,7 +210,7 @@ export const FoldSpaceHelperReactView = (
 					)}
 				</div>
 
-				<div className="row" style={{ width: "100%", marginBottom: 4}}>
+				<div className="row" style={{ width: "100%", marginBottom: 4 }}>
 					<div
 						className="col"
 						style={{
@@ -361,36 +371,47 @@ export const FoldSpaceHelperReactView = (
 						)}
 					</div>
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+				{partitioned_mode === "按字数" && (
 					<div
-						className="col"
-						style={{
-							display: "inline-block",
-							paddingRight: 0,
-							width: "20%",
-							textAlign: "right",
-						}}
+						className="row"
+						style={{ width: "100%", marginBottom: 8 }}
 					>
-						字数分块大小
+						<div
+							className="col"
+							style={{
+								display: "inline-block",
+								paddingRight: 0,
+								width: "20%",
+								textAlign: "right",
+							}}
+						>
+							字数分块大小
+						</div>
+						<div
+							className="col"
+							style={{ display: "inline-block", width: "80%" }}
+						>
+							<input
+								type="number"
+								style={{ width: "100%" }}
+								className="form-control"
+								{...register(
+									"partitioned_chunk_size",
+									numberFieldOptions
+								)}
+							/>
+						</div>
+						{errors?.partitioned_chunk_size && (
+							<p style={{ color: "red" }}>
+								{errors.partitioned_chunk_size.message}
+							</p>
+						)}
 					</div>
-					<div
-						className="col"
-						style={{ display: "inline-block", width: "80%" }}
-					>
-						<input
-							type="number"
-							style={{ width: "100%" }}
-							className="form-control"
-							{...register("partitioned_chunk_size",numberFieldOptions)}
-						/>
-					</div>
-					{errors?.partitioned_chunk_size && (
-						<p style={{ color: "red" }}>
-							{errors.partitioned_chunk_size.message}
-						</p>
-					)}
-				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 0,fontSize:10 }}>
+				)}
+				<div
+					className="row"
+					style={{ width: "100%", marginBottom: 0, fontSize: 10 }}
+				>
 					<div
 						className="col"
 						style={{ display: "inline-block", width: "30%" }}
@@ -414,7 +435,10 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_size",numberFieldOptions)}
+								{...register(
+									"knowledge_chunk_size",
+									numberFieldOptions
+								)}
 							/>
 						</div>
 					</div>
@@ -441,7 +465,10 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_overlap",numberFieldOptions)}
+								{...register(
+									"knowledge_chunk_overlap",
+									numberFieldOptions
+								)}
 							/>
 						</div>
 					</div>
@@ -468,10 +495,13 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_query_limit",numberFieldOptions)}
+								{...register(
+									"knowledge_query_limit",
+									numberFieldOptions
+								)}
 							/>
 						</div>
-					</div>	
+					</div>
 					{errors?.knowledge_chunk_size && (
 						<p style={{ color: "red" }}>
 							{errors.knowledge_chunk_size.message}
@@ -589,7 +619,11 @@ export const FoldSpaceHelperReactView = (
 						/>
 					</div>
 					<p>
-						<a href={`http://192.168.31.56:6333/dashboard#/collections`} target="_blank" style={{color:"blue"}}>
+						<a
+							href={`http://192.168.31.56:6333/dashboard#/collections`}
+							target="_blank"
+							style={{ color: "blue" }}
+						>
 							向量数据库集合
 						</a>
 					</p>
