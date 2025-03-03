@@ -99,6 +99,7 @@ export const FoldSpaceHelperReactView = (
 	const {
 		register,
 		handleSubmit,
+		watch,
 		formState: { errors },
 		trigger,
 		getValues,
@@ -119,6 +120,10 @@ export const FoldSpaceHelperReactView = (
 			documents: [],
 		},
 	});
+	const partitioned_chunk_size = watch('partitioned_chunk_size');
+	const knowledge_chunk_size = watch('knowledge_chunk_size');
+	const knowledge_chunk_overlap = watch('knowledge_chunk_overlap');
+	const knowledge_query_limit = watch('knowledge_query_limit');
 	// @ts-ignore
 	const updateAttachments = async (
 		// @ts-ignore
@@ -156,6 +161,7 @@ export const FoldSpaceHelperReactView = (
 		new Notice(`form:${JSON.stringify(data)}`);
 		// 在这里处理表单提交
 	};
+	const numberFieldOptions = { valueAsNumber: true ,parse: (value: any) => Number(value)}
 	return (
 		<div
 			style={{
@@ -379,12 +385,14 @@ export const FoldSpaceHelperReactView = (
 							type="number"
 							style={{ width: "100%" }}
 							className="form-control"
-							{...register("partitioned_chunk_size"),{ valueAsNumber: true ,parse: (value: any) => Number(value)}}
+							{...register("partitioned_chunk_size",numberFieldOptions)}
 						/>
 					</div>
 					{errors?.partitioned_chunk_size && (
 						<p style={{ color: "red" }}>
 							{errors.partitioned_chunk_size.message}
+							{partitioned_chunk_size}
+							{typeof partitioned_chunk_size}
 						</p>
 					)}
 				</div>
@@ -412,7 +420,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_size"),{ valueAsNumber: true ,parse: (value: any) => Number(value),}}
+								{...register("knowledge_chunk_size",numberFieldOptions)}
 							/>
 						</div>
 					</div>
@@ -439,7 +447,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_overlap"),{ valueAsNumber: true ,parse: (value: any) => Number(value)}}
+								{...register("knowledge_chunk_overlap",numberFieldOptions)}
 							/>
 						</div>
 					</div>
@@ -466,7 +474,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_query_limit"),{ valueAsNumber: true ,parse: (value: any) => Number(value)}}
+								{...register("knowledge_query_limit",numberFieldOptions)}
 							/>
 						</div>
 					</div>	
