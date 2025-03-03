@@ -379,7 +379,7 @@ export const FoldSpaceHelperReactView = (
 							type="number"
 							style={{ width: "100%" }}
 							className="form-control"
-							{...register("partitioned_chunk_size")}
+							{...register("partitioned_chunk_size"),{ valueAsNumber: true }}
 						/>
 					</div>
 					{errors?.partitioned_chunk_size && (
@@ -412,7 +412,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_size")}
+								{...register("knowledge_chunk_size"),{ valueAsNumber: true }}
 							/>
 						</div>
 					</div>
@@ -439,7 +439,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_chunk_overlap")}
+								{...register("knowledge_chunk_overlap"),{ valueAsNumber: true }}
 							/>
 						</div>
 					</div>
@@ -466,7 +466,7 @@ export const FoldSpaceHelperReactView = (
 								type="number"
 								style={{ width: "100%" }}
 								className="form-control"
-								{...register("knowledge_query_limit")}
+								{...register("knowledge_query_limit"),{ valueAsNumber: true }}
 							/>
 						</div>
 					</div>	
