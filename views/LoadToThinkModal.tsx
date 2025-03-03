@@ -49,6 +49,12 @@ const formSchema = z.object({
 	partitioned_chunk_size: z.number().optional(),
 	vector_uuid: z.string().min(1, { message: "向量ID必须存在" }),
 	if_create_vector_db: z.string().optional(),
+	knowledge_chunk_size: z
+		.number()
+		.min(100, { message: "知识块大小必须大于100" }),
+	knowledge_chunk_overlap: z
+		.number()
+		.min(10, { message: "知识块重叠大小必须大于1" }),
 	if_run_doc_intro_workflow: z.string().optional(),
 });
 export const FoldSpaceHelperReactView = (
@@ -106,6 +112,8 @@ export const FoldSpaceHelperReactView = (
 			if_create_vector_db: "1",
 			if_run_doc_intro_workflow: "0",
 			partitioned_chunk_size: 1000,
+			knowledge_chunk_size: 500,
+			knowledge_chunk_overlap: 100,
 			documents: [],
 		},
 	});
@@ -354,7 +362,7 @@ export const FoldSpaceHelperReactView = (
 						className="col"
 						style={{
 							display: "inline-block",
-							paddingRight: 32,
+							paddingRight: 0,
 							width: "20%",
 							textAlign: "right",
 						}}
@@ -370,12 +378,77 @@ export const FoldSpaceHelperReactView = (
 							style={{ width: "100%" }}
 							className="form-control"
 							{...register("partitioned_chunk_size")}
-							defaultValue={1000}
 						/>
 					</div>
 					{errors?.partitioned_chunk_size && (
 						<p style={{ color: "red" }}>
 							{errors.partitioned_chunk_size.message}
+						</p>
+					)}
+				</div>
+				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+					<div
+						className="col"
+						style={{ display: "inline-block", width: "50%" }}
+					>
+						<div
+							className="col"
+							style={{
+								display: "inline-block",
+								paddingRight: 0,
+								width: "50%",
+								textAlign: "right",
+							}}
+						>
+							知识库分块大小
+						</div>
+						<div
+							className="col"
+							style={{ display: "inline-block", width: "50%" }}
+						>
+							<input
+								type="number"
+								style={{ width: "100%" }}
+								className="form-control"
+								{...register("knowledge_chunk_size")}
+							/>
+						</div>
+					</div>
+					<div
+						className="col"
+						style={{ display: "inline-block", width: "50%" }}
+					>
+						<div
+							className="col"
+							style={{
+								display: "inline-block",
+								paddingRight: 0,
+								width: "50%",
+								textAlign: "right",
+							}}
+						>
+							知识库分块overlap大小
+						</div>
+						<div
+							className="col"
+							style={{ display: "inline-block", width: "50%" }}
+						>
+							<input
+								type="number"
+								style={{ width: "100%" }}
+								className="form-control"
+								{...register("knowledge_chunk_overlap")}
+							/>
+						</div>
+					</div>
+					{errors?.knowledge_chunk_size && (
+						<p style={{ color: "red" }}>
+							{errors.knowledge_chunk_size.message}
+						</p>
+					)}
+					{errors?.knowledge_chunk_overlap && (
+						<p style={{ color: "red" }}>
+							{errors.knowledge_chunk_overlap.message}
 						</p>
 					)}
 				</div>
@@ -602,7 +675,8 @@ export const FoldSpaceHelperReactView = (
 											addRunFlowMessageRecord(
 												`任务运行中... 已经开始 ${
 													(new Date().getTime() -
-													beginTime)/1000
+														beginTime) /
+													1000
 												} 秒`
 											);
 										}, 10 * 1000);
