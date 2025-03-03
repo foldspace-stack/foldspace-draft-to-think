@@ -115,7 +115,7 @@ export const FoldSpaceHelperReactView = (
 			partitioned_chunk_size: 1000,
 			knowledge_chunk_size: 500,
 			knowledge_chunk_overlap: 100,
-			knowledge_query_limit:2,
+			knowledge_query_limit:1,
 			documents: [],
 		},
 	});
