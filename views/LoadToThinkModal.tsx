@@ -55,6 +55,7 @@ const formSchema = z.object({
 	knowledge_chunk_overlap: z
 		.number()
 		.min(10, { message: "知识块重叠大小必须大于1" }),
+	knowledge_query_limit: z.number().min(1, { message: "知识库查询限制必须大于1" }),
 	if_run_doc_intro_workflow: z.string().optional(),
 });
 export const FoldSpaceHelperReactView = (
@@ -389,7 +390,7 @@ export const FoldSpaceHelperReactView = (
 				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
 					<div
 						className="col"
-						style={{ display: "inline-block", width: "50%" }}
+						style={{ display: "inline-block", width: "30%" }}
 					>
 						<div
 							className="col"
@@ -416,7 +417,7 @@ export const FoldSpaceHelperReactView = (
 					</div>
 					<div
 						className="col"
-						style={{ display: "inline-block", width: "50%" }}
+						style={{ display: "inline-block", width: "30%" }}
 					>
 						<div
 							className="col"
@@ -441,6 +442,33 @@ export const FoldSpaceHelperReactView = (
 							/>
 						</div>
 					</div>
+					<div
+						className="col"
+						style={{ display: "inline-block", width: "40%" }}
+					>
+						<div
+							className="col"
+							style={{
+								display: "inline-block",
+								paddingRight: 0,
+								width: "50%",
+								textAlign: "right",
+							}}
+						>
+							知识库匹配数量
+						</div>
+						<div
+							className="col"
+							style={{ display: "inline-block", width: "50%" }}
+						>
+							<input
+								type="number"
+								style={{ width: "100%" }}
+								className="form-control"
+								{...register("knowledge_query_limit")}
+							/>
+						</div>
+					</div>	
 					{errors?.knowledge_chunk_size && (
 						<p style={{ color: "red" }}>
 							{errors.knowledge_chunk_size.message}
