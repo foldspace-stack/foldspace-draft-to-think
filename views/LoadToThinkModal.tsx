@@ -138,6 +138,7 @@ export const FoldSpaceHelperReactView = (
 			);
 			// @ts-ignore
 			setAttachments(new_attachments);
+			// @ts-ignore
 			const documents = new_attachments.map((item: any) => item.url);
 			setMassage(
 				`上传附件完成 ${documents.length} 个附件 ${JSON.stringify(
@@ -172,7 +173,7 @@ export const FoldSpaceHelperReactView = (
 						<h1>FoldSpece助手</h1>
 					</center>
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+				<div className="row" style={{ width: "100%", marginBottom: 4}}>
 					<input
 						style={{ width: "100%" }}
 						type="text"
@@ -186,7 +187,7 @@ export const FoldSpaceHelperReactView = (
 						</p>
 					)}
 				</div>
-				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+				<div className="row" style={{ width: "100%", marginBottom: 4}}>
 					<textarea
 						style={{ width: "100%", height: 300 }}
 						className="form-control"
@@ -199,7 +200,7 @@ export const FoldSpaceHelperReactView = (
 					)}
 				</div>
 
-				<div className="row" style={{ width: "100%", marginBottom: 8 }}>
+				<div className="row" style={{ width: "100%", marginBottom: 4}}>
 					<div
 						className="col"
 						style={{
@@ -587,6 +588,11 @@ export const FoldSpaceHelperReactView = (
 							{...register("vector_uuid")}
 						/>
 					</div>
+					<p>
+						<a href={`http://192.168.31.56:6333/dashboard#/collections`} target="_blank" style={{color:"blue"}}>
+							向量数据库集合
+						</a>
+					</p>
 					{errors?.vector_uuid && (
 						<p style={{ color: "red" }}>
 							{errors.vector_uuid.message}
