@@ -19,7 +19,7 @@ import {
 	removeAllAttachments,
 	uploadAttachmentFiles,
 } from "./obsidain-helper";
-import { allUrlHasValueInArray } from "./urils";
+import { allUrlHasValueInArray, getCurrentDateTime } from "./urils";
 marked.use({
 	async: false,
 	pedantic: false,
@@ -99,7 +99,6 @@ export const FoldSpaceHelperReactView = (
 	const {
 		register,
 		handleSubmit,
-		watch,
 		formState: { errors },
 		trigger,
 		getValues,
@@ -110,7 +109,7 @@ export const FoldSpaceHelperReactView = (
 			doc_title: props.title,
 			doc_content: props.content,
 			partitioned_mode: "按段落",
-			vector_uuid: md5(props.content),
+			vector_uuid: getCurrentDateTime()+"_"+md5(props.content),
 			if_create_vector_db: "1",
 			if_run_doc_intro_workflow: "0",
 			partitioned_chunk_size: 1000,
