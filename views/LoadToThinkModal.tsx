@@ -51,11 +51,11 @@ const formSchema = z.object({
 	if_create_vector_db: z.string().optional(),
 	knowledge_chunk_size: z
 		.number()
-		.min(100, { message: "知识块大小必须大于100" }),
+		.min(100, { message: "知识块大小必须大于100" }).max(2000, { message: "知识块大小必须小于2000" }),
 	knowledge_chunk_overlap: z
 		.number()
-		.min(10, { message: "知识块重叠大小必须大于1" }),
-	knowledge_query_limit: z.number().min(1, { message: "知识库查询限制必须大于1" }),
+		.min(10, { message: "知识块重叠大小必须大于10" }).max(300, { message: "知识块重叠大小必须小于300" }),
+	knowledge_query_limit: z.number().min(1, { message: "知识库查询限制必须大于1" }).max(10, { message: "知识库查询限制必须小于10" }),
 	if_run_doc_intro_workflow: z.string().optional(),
 });
 export const FoldSpaceHelperReactView = (
@@ -120,10 +120,6 @@ export const FoldSpaceHelperReactView = (
 			documents: [],
 		},
 	});
-	const partitioned_chunk_size = watch('partitioned_chunk_size');
-	const knowledge_chunk_size = watch('knowledge_chunk_size');
-	const knowledge_chunk_overlap = watch('knowledge_chunk_overlap');
-	const knowledge_query_limit = watch('knowledge_query_limit');
 	// @ts-ignore
 	const updateAttachments = async (
 		// @ts-ignore
@@ -391,8 +387,6 @@ export const FoldSpaceHelperReactView = (
 					{errors?.partitioned_chunk_size && (
 						<p style={{ color: "red" }}>
 							{errors.partitioned_chunk_size.message}
-							{partitioned_chunk_size}
-							{typeof partitioned_chunk_size}
 						</p>
 					)}
 				</div>
