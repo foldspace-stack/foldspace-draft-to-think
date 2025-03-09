@@ -40,7 +40,7 @@ interface FoldSpaceHelperReactViewProps {
 }
 
 const formSchema = z.object({
-	doc_title: z.string().min(3, { message: "标题必须存在" }),
+	doc_title: z.string().min(1, { message: "标题必须存在" }),
 	doc_content: z.string().min(3, { message: "内容必须存在" }),
 	documents: z.array(z.string()).optional(),
 	channel_id: z.string().min(1, { message: "频道必须存在" }),
