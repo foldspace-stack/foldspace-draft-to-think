@@ -4,7 +4,7 @@ import { Notice } from "obsidian";
 export const ApiSdk = axios.create({
 	baseURL: "http://openapi.inner.foldspace.cn",
 
-	timeout: 1000 * 60 * 5,
+	timeout: 1000 * 60 * 8,
 	headers: {
 		"Content-type": "application/json",
 		Accept: "text/json",
