@@ -805,6 +805,11 @@ export const FoldSpaceHelperReactView = (
 						>
 							提交任务
 						</button>
+						<button
+							className="btn btn-primary"
+							type="button">
+								提交到视频工作台
+							</button>
 					</div>
 				</div>
 			</form>
