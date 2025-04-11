@@ -117,7 +117,7 @@ export const FoldSpaceHelperReactView = (
 			doc_title: props.title,
 			doc_content: props.content,
 			partitioned_mode: "按段落",
-			vector_uuid: getCurrentDateTime() + "_" + md5(props.content),
+			vector_uuid:  md5(props.title+props.filePath),
 			if_create_vector_db: "1",
 			if_run_doc_intro_workflow: "0",
 			partitioned_chunk_size: 1000,
