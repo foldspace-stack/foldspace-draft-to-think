@@ -77,6 +77,8 @@ export const FoldSpaceHelperReactView = (
 	const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false);
 	const [runFlowMessages, setRunFlowMessages] = useState<string[]>([]);
 	const [resultDocUrl, setResultDocUrl] = useState<string>("");
+	const [apiTableDocUrl, setApiTableDocUrl] = useState<string>("");
+
 	const addRunFlowMessageRecord = (message: string) => {
 		setRunFlowMessages((prev) => [...prev, message]);
 	};
@@ -708,6 +710,7 @@ export const FoldSpaceHelperReactView = (
 									"开始验证表单...",
 								]);
 								setResultDocUrl("");
+								setApiTableDocUrl("");
 								const isValid = await trigger();
 								new Notice(`开始验证表单, 验证结果:${isValid}`);
 								if (isValid) {
@@ -768,6 +771,9 @@ export const FoldSpaceHelperReactView = (
 											setResultDocUrl(
 												final_obj?.doc_url || ""
 											);
+											setApiTableDocUrl(
+												difyOut?.apitableRecordUrl || ""
+											);
 											addRunFlowMessageRecord(
 												"运行流程完成..."
 											);
@@ -805,11 +811,6 @@ export const FoldSpaceHelperReactView = (
 						>
 							提交任务
 						</button>
-						<button
-							className="btn btn-primary"
-							type="button">
-								提交到视频工作台
-							</button>
 					</div>
 				</div>
 			</form>
@@ -858,6 +859,8 @@ export const FoldSpaceHelperReactView = (
 								{" "}
 								|{" "}
 							</span>
+							</p>
+							<p>
 							<a
 								href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/p2kg9yuerbjozs8/mua5zut94cdsj2v/vwcym9tcdgqfsdhh/view"
 								target="_blank"
@@ -886,6 +889,20 @@ export const FoldSpaceHelperReactView = (
 									}}
 								>
 									{resultDocUrl}
+								</a>
+							)}
+						</p>
+						<p>
+						{apiTableDocUrl && (
+								<a
+									href={apiTableDocUrl}
+									target="_blank"
+									style={{
+										textDecoration: "none",
+										color: "blue",
+									}}
+								>
+									{apiTableDocUrl}
 								</a>
 							)}
 						</p>
