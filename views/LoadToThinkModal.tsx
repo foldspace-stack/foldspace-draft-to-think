@@ -258,7 +258,7 @@ export const FoldSpaceHelperReactView = (
 						}}
 					>
 						<a
-							href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
+							href="http://nocodb.apps.foldspace.cn/dashboard/#/nc/view/654f6e4d-9031-4ee8-b993-b7cd7b2c3a33"
 							target="_blank"
 							style={{ textDecoration: "none", color: "blue" }}
 						>
@@ -268,7 +268,7 @@ export const FoldSpaceHelperReactView = (
 							|
 						</span>
 						<a
-							href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/form/85ce8c53-0a35-4a70-9089-a7322664dda5"
+							href="http://nocodb.apps.foldspace.cn/dashboard/#/nc/form/85ce8c53-0a35-4a70-9089-a7322664dda5"
 							target="_blank"
 							style={{ textDecoration: "none", color: "blue" }}
 						>
@@ -862,7 +862,7 @@ export const FoldSpaceHelperReactView = (
 							</p>
 							<p>
 							<a
-								href="https://nocodb.apps.foldspace.cn/dashboard/#/nc/p2kg9yuerbjozs8/mua5zut94cdsj2v/vwcym9tcdgqfsdhh/view"
+								href="http://nocodb.apps.foldspace.cn/dashboard/#/nc/p2kg9yuerbjozs8/mua5zut94cdsj2v/vwcym9tcdgqfsdhh/view"
 								target="_blank"
 								style={{
 									textDecoration: "none",
