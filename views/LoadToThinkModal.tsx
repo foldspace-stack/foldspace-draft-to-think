@@ -117,7 +117,7 @@ export const FoldSpaceHelperReactView = (
 			doc_title: props.title,
 			doc_content: props.content,
 			partitioned_mode: "按段落",
-			vector_uuid:  md5(props.title+props.filePath),
+			vector_uuid: md5(props.title + props.filePath),
 			if_create_vector_db: "1",
 			if_run_doc_intro_workflow: "0",
 			partitioned_chunk_size: 1000,
@@ -859,8 +859,8 @@ export const FoldSpaceHelperReactView = (
 								{" "}
 								|{" "}
 							</span>
-							</p>
-							<p>
+						</p>
+						<p>
 							<a
 								href="http://nocodb.apps.foldspace.cn/dashboard/#/nc/p2kg9yuerbjozs8/mua5zut94cdsj2v/vwcym9tcdgqfsdhh/view"
 								target="_blank"
@@ -893,7 +893,7 @@ export const FoldSpaceHelperReactView = (
 							)}
 						</p>
 						<p>
-						{apiTableDocUrl && (
+							{apiTableDocUrl && (
 								<a
 									href={apiTableDocUrl}
 									target="_blank"

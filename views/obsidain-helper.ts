@@ -117,13 +117,11 @@ export function removeLeadingSlash(str: string): string {
 export function isWindows(): boolean {
 	return process.platform === "win32";
 }
-export function linuxPathToWinPath(
-	linuxPath: string,
-): string {
+export function linuxPathToWinPath(linuxPath: string): string {
 	// 替换所有的正斜杠为反斜杠
 	const winPath = linuxPath.replace(/\//g, "\\");
 	return winPath;
- }
+}
 
 export async function uploadAttachmentFiles(
 	attachments: { path: string; fileName: string; file: File | null }[],
@@ -137,32 +135,27 @@ export async function uploadAttachmentFiles(
 	const new_attachments = await Promise.all(
 		attachments.map(async (attachment) => {
 			const resourcePath = removeLeadingSlash(attachment.path);
-			setMassage(
-				"开始上传附件 " + attachment.fileName + " 中..."
-			);
+			setMassage("开始上传附件 " + attachment.fileName + " 中...");
 			//const readPath = isWindowsPlatform ? linuxPathToWinPath(decodeURIComponent(resourcePath)) : decodeURIComponent(resourcePath);
 			const readPath = decodeURIComponent(resourcePath);
 			setMassage(
 				`是否为window平台:${isWindowsPlatform} 读取路径:${readPath}`
 			);
-			const fileBuffer: ArrayBuffer | null = await readBinaryResourceFileWithObsidian(
-				readPath,
-				app,
-				setMassage
-			);
+			const fileBuffer: ArrayBuffer | null =
+				await readBinaryResourceFileWithObsidian(
+					readPath,
+					app,
+					setMassage
+				);
 			if (fileBuffer) {
 				setMassage(
 					`${attachment.path} 读取完成 ${fileBuffer?.byteLength}字节`
 				);
 			} else {
-				setMassage(
-					`${attachment.path} 读取失败 `
-				);
+				setMassage(`${attachment.path} 读取失败 `);
 				return attachment;
 			}
-			setMassage(
-				"开始上传附件 " + attachment.fileName + " 中..."
-			);
+			setMassage("开始上传附件 " + attachment.fileName + " 中...");
 			if (fileBuffer) {
 				const blob = new Blob([fileBuffer]);
 				const file = new File([blob], `${attachment.fileName}`);
@@ -197,7 +190,8 @@ export function removeImages(markdownText: string) {
 }
 
 export function removeFiles(markdownText: string) {
-	const filePattern = /\[([^\]]*)\]\(([^)]*\.(pdf|docx?|xlsx?|pptx?|zip|rar|txt))\)/g;
+	const filePattern =
+		/\[([^\]]*)\]\(([^)]*\.(pdf|docx?|xlsx?|pptx?|zip|rar|txt))\)/g;
 	return markdownText.replace(filePattern, ""); // 直接替换为空字符串
 }
 
